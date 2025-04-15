@@ -98,13 +98,9 @@
                 </configuration>
             </plugin>
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.5</version>
+				<version>0.8.11</version>
 				<executions>
 					<execution>
 						<goals>
@@ -138,6 +134,10 @@
 									</limits>
 								</rule>
 							</rules>
+							<excludes>
+								<exclude>**/dto/*</exclude> <!-- Exclure les DTOs -->
+								<exclude>**/*$HibernateProxy*</exclude> <!-- Proxies Hibernate -->
+							</excludes>
 						</configuration>
 					</execution>
 
