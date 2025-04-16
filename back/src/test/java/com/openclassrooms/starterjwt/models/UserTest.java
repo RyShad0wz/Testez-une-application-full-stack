@@ -1,4 +1,4 @@
-/* package com.openclassrooms.starterjwt.models;
+package com.openclassrooms.starterjwt.models;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,4 +38,4 @@ class UserTest {
         assertNotEquals(user1, user3);
         assertEquals(user1.hashCode(), user2.hashCode());
     }
-} */
+}

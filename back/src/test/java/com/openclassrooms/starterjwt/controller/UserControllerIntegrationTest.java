@@ -1,4 +1,4 @@
-/* package com.openclassrooms.starterjwt.controller;
+package com.openclassrooms.starterjwt.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -31,7 +31,10 @@ class UserControllerIntegrationTest {
         // Arrange
         User user = new User()
                 .setId(1L)
-                .setEmail("test@studio.com");
+                .setEmail("test@studio.com")
+                .setLastName("Doe")  // Add this
+                .setFirstName("John") // Add this
+                .setPassword("password"); // Add this
         given(userService.findById(1L)).willReturn(user);
 
         // Act & Assert
@@ -45,11 +48,14 @@ class UserControllerIntegrationTest {
         // Arrange
         User user = new User()
                 .setId(1L)
-                .setEmail("test@studio.com");
+                .setEmail("test@studio.com")
+                .setLastName("Doe")  // Add this
+                .setFirstName("John") // Add this
+                .setPassword("password"); // Add this
         given(userService.findById(1L)).willReturn(user);
 
         // Act & Assert
         mockMvc.perform(delete("/api/user/1"))
                 .andExpect(status().isOk());
     }
-} */
+}

@@ -1,4 +1,4 @@
-/* package com.openclassrooms.starterjwt.controller;
+package com.openclassrooms.starterjwt.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -19,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import java.util.Collections;
 
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
@@ -110,9 +111,11 @@ class UserControllerTest {
 
     private void setupSecurityContext(String email) {
         UserDetails userDetails = new org.springframework.security.core.userdetails.User(
-                email, "password", null);
+                email,
+                "password",
+                Collections.emptyList()); // Provide empty list instead of null
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-                userDetails, null);
+                userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
-} */
+}

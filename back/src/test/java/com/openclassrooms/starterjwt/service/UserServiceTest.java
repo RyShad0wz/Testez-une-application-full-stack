@@ -1,4 +1,4 @@
-/* package com.openclassrooms.starterjwt.service;
+package com.openclassrooms.starterjwt.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -74,4 +74,4 @@ class UserServiceTest {
         // Assert
         verify(userRepository, times(1)).deleteById(1L);
     }
-} */
+}
