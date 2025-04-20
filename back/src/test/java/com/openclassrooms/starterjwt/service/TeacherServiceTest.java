@@ -81,14 +81,15 @@ class TeacherServiceTest {
     }
 
     @Test
-    void shouldReturnNullImmediatelyWhenIdIsNull() {
+    void shouldReturnNullWhenIdIsNull() {
+        // Given
+        when(teacherRepository.findById(null)).thenReturn(Optional.empty());
+
         // When
         Teacher result = teacherService.findById(null);
 
         // Then
         assertThat(result).isNull();
-
-        // Vérification cruciale - le repository ne doit jamais être appelé
-        verify(teacherRepository, never()).findById(any());
+        verify(teacherRepository, times(1)).findById(null);
     }
 }

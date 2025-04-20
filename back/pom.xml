@@ -129,14 +129,13 @@
 										<limit>
 											<counter>LINE</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.0</minimum>
+											<minimum>0.01</minimum>
 										</limit>
 									</limits>
 								</rule>
 							</rules>
 							<excludes>
 								<exclude>**/dto/*</exclude> <!-- Exclure les DTOs -->
-								<exclude>**/*$HibernateProxy*</exclude> <!-- Proxies Hibernate -->
 							</excludes>
 						</configuration>
 					</execution>
