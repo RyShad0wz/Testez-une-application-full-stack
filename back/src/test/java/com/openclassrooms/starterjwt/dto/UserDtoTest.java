@@ -1,46 +1,141 @@
 package com.openclassrooms.starterjwt.dto;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
-import java.util.Set;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import org.junit.jupiter.api.BeforeAll;
+
 import org.junit.jupiter.api.Test;
 
 class UserDtoTest {
 
-    private static Validator validator;
-    private final LocalDateTime currentDateTime = LocalDateTime.now();
+    private final LocalDateTime fixedDateTime = LocalDateTime.of(2023, 1, 1, 0, 0);
 
-    @BeforeAll
-    static void setUp() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
+    @Test
+    void testEqualsAndHashCode() {
+        // Given
+        UserDto user1 = new UserDto(
+                1L,
+                "test@test.com",
+                "Doe",
+                "John",
+                false,
+                "password",
+                fixedDateTime,
+                fixedDateTime
+        );
+
+        UserDto user2 = new UserDto(
+                1L,
+                "test@test.com",
+                "Doe",
+                "John",
+                false,
+                "password",
+                fixedDateTime,
+                fixedDateTime
+        );
+
+        UserDto differentUser = new UserDto(
+                2L,
+                "other@test.com",
+                "Smith",
+                "Jane",
+                true,
+                "password",
+                fixedDateTime,
+                fixedDateTime
+        );
+
+        // Then
+        assertThat(user1).isEqualTo(user2);
+        assertThat(user1).hasSameHashCodeAs(user2);
+        assertThat(user1).isNotEqualTo(differentUser);
+        assertThat(user1.hashCode()).isNotEqualTo(differentUser.hashCode());
     }
 
     @Test
-    void shouldCreateUserDto() {
-        UserDto dto = new UserDto();
-        dto.setId(1L);
-        dto.setEmail("test@test.com");
-        dto.setLastName("Doe");
-        dto.setFirstName("John");
-        dto.setAdmin(false);
-        dto.setPassword("password");
-        dto.setCreatedAt(currentDateTime);
-        dto.setUpdatedAt(currentDateTime);
+    void testCanEqual() {
+        // Given
+        UserDto user1 = new UserDto();
+        UserDto user2 = new UserDto();
 
-        assertThat(dto.getId()).isEqualTo(1L);
-        assertThat(dto.getEmail()).isEqualTo("test@test.com");
-        assertThat(dto.getLastName()).isEqualTo("Doe");
-        assertThat(dto.getFirstName()).isEqualTo("John");
-        assertThat(dto.isAdmin()).isFalse();
-        assertThat(dto.getPassword()).isEqualTo("password");
-        assertThat(dto.getCreatedAt()).isEqualTo(currentDateTime);
-        assertThat(dto.getUpdatedAt()).isEqualTo(currentDateTime);
+        // When/Then
+        assertThat(user1.canEqual(user2)).isTrue();
+        assertThat(user1.canEqual(new Object())).isFalse();
+    }
+
+    @Test
+    void testToString() {
+        // Given
+        UserDto user = new UserDto(
+                1L,
+                "test@test.com",
+                "Doe",
+                "John",
+                false,
+                null,
+                fixedDateTime,
+                fixedDateTime
+        );
+
+        // When
+        String toString = user.toString();
+
+        // Then
+        assertThat(toString).contains("test@test.com");
+        assertThat(toString).contains("Doe");
+        assertThat(toString).contains("John");
+    }
+
+    @Test
+    void testAllSetters() {
+        // Given
+        UserDto user = new UserDto();
+
+        // When
+        user.setId(1L);
+        user.setEmail("test@test.com");
+        user.setLastName("Doe");
+        user.setFirstName("John");
+        user.setAdmin(false);
+        user.setPassword("password");
+        user.setCreatedAt(fixedDateTime);
+        user.setUpdatedAt(fixedDateTime);
+
+        // Then
+        assertThat(user.getId()).isEqualTo(1L);
+        assertThat(user.getEmail()).isEqualTo("test@test.com");
+        assertThat(user.getLastName()).isEqualTo("Doe");
+        assertThat(user.getFirstName()).isEqualTo("John");
+        assertThat(user.isAdmin()).isFalse();
+        assertThat(user.getPassword()).isEqualTo("password");
+        assertThat(user.getCreatedAt()).isEqualTo(fixedDateTime);
+        assertThat(user.getUpdatedAt()).isEqualTo(fixedDateTime);
+    }
+
+    @Test
+    void testConstructor() {
+        // When
+        UserDto user = new UserDto(
+                1L,
+                "test@test.com",
+                "Doe",
+                "John",
+                false,
+                "password",
+                fixedDateTime,
+                fixedDateTime
+        );
+
+        // Then
+        assertThat(user.getId()).isEqualTo(1L);
+        assertThat(user.getEmail()).isEqualTo("test@test.com");
+        assertThat(user.getLastName()).isEqualTo("Doe");
+        assertThat(user.getFirstName()).isEqualTo("John");
+        assertThat(user.isAdmin()).isFalse();
+        assertThat(user.getPassword()).isEqualTo("password");
+        assertThat(user.getCreatedAt()).isEqualTo(fixedDateTime);
+        assertThat(user.getUpdatedAt()).isEqualTo(fixedDateTime);
     }
 }

@@ -21,7 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class SessionMapperTest {
+class SessionMapperImplTest {
 
     @Mock
     private TeacherService teacherService;
