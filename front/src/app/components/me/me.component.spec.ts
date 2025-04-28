@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { SessionService } from 'src/app/services/session.service';
 import { UserService } from 'src/app/services/user.service';
 import { User } from '../../interfaces/user.interface';
@@ -23,19 +23,17 @@ describe('MeComponent', () => {
   let mockSnackBar: Partial<MatSnackBar>;
   let mockRouter: Partial<Router>;
 
-  // Correction de l'interface User
   const baseUser: User = {
     id: 1,
     firstName: 'John',
     lastName: 'Doe',
     email: 'john@doe.com',
     admin: true,
-    password: 'fakePassword', // Ajout de la propriété manquante
+    password: 'fakePassword',
     createdAt: new Date(),
     updatedAt: new Date(),
   };
 
-  // Correction de l'interface SessionInformation
   const mockSessionInfo: SessionInformation = {
     token: 'fakeToken',
     type: 'user',
@@ -48,17 +46,22 @@ describe('MeComponent', () => {
 
   beforeEach(async () => {
     mockSessionService = {
-      sessionInformation: mockSessionInfo, // Utilisation de l'objet complet
+      sessionInformation: mockSessionInfo,
       logOut: jest.fn(),
     };
 
     mockUserService = {
       getById: jest.fn().mockReturnValue(of(baseUser)),
-      delete: jest.fn().mockReturnValue(of(null)),
+      delete: jest.fn().mockImplementation(() => of(null)),
     };
 
-    mockSnackBar = { open: jest.fn() };
-    mockRouter = { navigate: jest.fn() };
+    mockSnackBar = { 
+      open: jest.fn().mockReturnValue({ onAction: () => of({}) })
+    };
+    
+    mockRouter = { 
+      navigate: jest.fn() 
+    };
 
     await TestBed.configureTestingModule({
       declarations: [MeComponent],
@@ -117,7 +120,6 @@ describe('MeComponent', () => {
       const nonAdminUser = { ...baseUser, admin: false };
       mockUserService.getById = jest.fn().mockReturnValue(of(nonAdminUser));
       
-      // Recréation du composant avec les nouvelles données
       fixture = TestBed.createComponent(MeComponent);
       component = fixture.componentInstance;
       fixture.detectChanges();
@@ -128,7 +130,7 @@ describe('MeComponent', () => {
       expect(deleteButton).toBeTruthy();
     });
 
-    it('should handle account deletion', () => {
+    it('should handle account deletion successfully', () => {
       component.delete();
       
       expect(mockUserService.delete).toHaveBeenCalledWith('1');
@@ -139,6 +141,52 @@ describe('MeComponent', () => {
       );
       expect(mockSessionService.logOut).toHaveBeenCalled();
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/']);
+    });
+  });
+
+  describe('Error handling', () => {
+    it('should handle error when fetching user', () => {
+      mockUserService.getById = jest.fn().mockReturnValue(throwError(() => new Error('Fetch failed')));
+      
+      fixture = TestBed.createComponent(MeComponent);
+      component = fixture.componentInstance;
+      
+      expect(() => {
+        fixture.detectChanges();
+      }).not.toThrow();
+      
+      expect(component.user).toBeUndefined();
+    });
+
+    it('should handle null user response', () => {
+      mockUserService.getById = jest.fn().mockReturnValue(of(null));
+      
+      fixture = TestBed.createComponent(MeComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+      
+      expect(component.user).toBeNull();
+    });
+
+    it('should handle error during account deletion', () => {
+      mockUserService.delete = jest.fn().mockReturnValue(throwError(() => new Error('Delete failed')));
+      
+      expect(() => {
+        component.delete();
+      }).not.toThrow();
+      
+      expect(mockUserService.delete).toHaveBeenCalledWith('1');
+      // Vérifiez que les actions de succès ne sont pas appelées
+      expect(mockSnackBar.open).not.toHaveBeenCalled();
+      expect(mockSessionService.logOut).not.toHaveBeenCalled();
+      expect(mockRouter.navigate).not.toHaveBeenCalled();
+    });
+
+    it('should display nothing when user is undefined', () => {
+      component.user = undefined;
+      fixture.detectChanges();
+      const compiled = fixture.nativeElement;
+      expect(compiled.querySelector('p')).toBeNull();
     });
   });
 
@@ -162,10 +210,9 @@ describe('MeComponent', () => {
       const paragraphs = Array.from(compiled.querySelectorAll('p'))
         .map((p: unknown) => (p as HTMLElement).textContent?.trim());
   
-      // Correction avec 2 espaces après le deux-points
       expect(paragraphs).toEqual(
         expect.arrayContaining([
-          expect.stringContaining(`Create at:  ${formattedDate}`), // Double espace
+          expect.stringContaining(`Create at:  ${formattedDate}`),
           expect.stringContaining(`Last update:  ${formattedDate}`)
         ])
       );
