@@ -1,44 +1,53 @@
-describe('Register spec', () => {
-  it('Register successfull', () => {
-    cy.visit('/register');
-    
-    // Vérifie que les champs existent
-    cy.get('input[formControlName=firstName]').should('exist');
-    cy.get('input[formControlName=lastName]').should('exist');
-    cy.get('input[formControlName=email]').should('exist');
-    cy.get('input[formControlName=password]').should('exist');
+// cypress/e2e/register.cy.ts
 
-    cy.intercept('POST', '/api/auth/register', {
+describe('Register spec', () => {
+  const validFirstName  = '5';        // passes Validators.min(3) numerically
+  const validLastName   = '5';
+  const validPassword   = '5';        // same for password
+  const validEmail      = `test${Date.now()}@example.com`;
+
+  it('Submit button is disabled when form is invalid', () => {
+    cy.visit('/register');
+    cy.get('button[type="submit"]').should('be.disabled');
+  });
+
+  it('Register successful', () => {
+    cy.intercept('POST', '**/api/auth/register', {
       statusCode: 200,
       body: {}
     }).as('registerRequest');
 
-    const testEmail = `toto${Math.floor(Math.random() * 10000)}@toto.com`;
-    
-    cy.get('input[formControlName=firstName]').type('toto');
-    cy.get('input[formControlName=lastName]').type('toto');
-    cy.get('input[formControlName=email]').type(testEmail);
-    cy.get('input[formControlName=password]').type('test!1234{enter}');
+    cy.visit('/register');
+    cy.get('[formControlName="firstName"]').type(validFirstName);
+    cy.get('[formControlName="lastName"]').type(validLastName);
+    cy.get('[formControlName="email"]').type(validEmail);
+    cy.get('[formControlName="password"]').type(validPassword);
+
+    cy.get('button[type="submit"]')
+      .should('not.be.disabled')
+      .click();
 
     cy.wait('@registerRequest').its('response.statusCode').should('eq', 200);
     cy.url().should('include', '/login');
   });
 
-  it('Register with error', () => {
-    cy.visit('/register');
-
-    cy.intercept('POST', '/api/auth/register', {
+  it('Shows generic error on failure', () => {
+    cy.intercept('POST', '**/api/auth/register', {
       statusCode: 500,
       body: { message: 'Error occurred' }
     }).as('registerRequest');
 
-    cy.get('input[formControlName=firstName]').type('toto');
-    cy.get('input[formControlName=lastName]').type('toto');
-    cy.get('input[formControlName=email]').type('toto3@toto.com');
-    cy.get('input[formControlName=password]').type('test!1234{enter}');
+    cy.visit('/register');
+    cy.get('[formControlName="firstName"]').type(validFirstName);
+    cy.get('[formControlName="lastName"]').type(validLastName);
+    cy.get('[formControlName="email"]').type(validEmail);
+    cy.get('[formControlName="password"]').type(validPassword);
 
+    cy.get('button[type="submit"]').should('not.be.disabled').click();
     cy.wait('@registerRequest');
-    cy.get('.error').should('be.visible')
-      .and('contain', 'An error occurred'); // Adaptez au message réel
+
+    cy.get('span.error')
+      .should('be.visible')
+      .and('contain', 'An error occurred');
   });
 });
