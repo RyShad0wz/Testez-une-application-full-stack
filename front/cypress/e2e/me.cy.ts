@@ -23,6 +23,7 @@ describe('Me spec', () => {
       }
     }).as('loginRequest')
 
+    // stub de la liste de sessions (pour la nav bar et le guard)
     cy.intercept('GET', sessionUrl, { statusCode: 200, body: [] }).as('getSession')
 
     cy.visit('/login')
@@ -46,7 +47,7 @@ describe('Me spec', () => {
     })
 
     it('Displays user info and delete button', () => {
-      // 1) stub de la récupération du user
+      // stub de la récupération du user
       cy.intercept('GET', userUrl, {
         statusCode: 200,
         body: {
@@ -60,28 +61,28 @@ describe('Me spec', () => {
         }
       }).as('getUser')
 
-      // 2) stub de la suppression
+      // stub de la suppression
       cy.intercept('DELETE', userUrl, { statusCode: 204 }).as('deleteUser')
 
-      // 3) navigation vers la page /me via le menu
+      // on clique dans la barre de nav
       cy.get('span.link').contains('Account').click()
 
-      // 4) on attend l’appel userService.getById()
+      // on attend l’appel userService.getById()
       cy.wait('@getUser')
 
-      // 5) vérifications du profil
+      // vérifs
       cy.contains('Name: First LAST').should('be.visible')
       cy.contains('Email: first.last@example.com').should('be.visible')
       cy.contains('Delete my account:').should('be.visible')
 
-      // 6) suppression et snack-bar
+      // on supprime et on vérifie le snack-bar + redirection
       cy.get('button[color="warn"]').click()
       cy.wait('@deleteUser')
       cy.get('simple-snack-bar')
         .should('contain', 'Your account has been deleted !')
 
-      // 7) redirection vers la home page
-      cy.url().should('eq', Cypress.config().baseUrl)
+      // on vérifie qu’on est redirigé à la racine ("/")
+      cy.location('pathname').should('eq', '/')
     })
   })
 
