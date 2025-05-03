@@ -1,130 +1,70 @@
-# Yoga-App — Application de réservation de sessions de yoga
+# Yoga App — Front-end
 
-> **Testez une application full-stack**  
-> Front-end : Angular 14 • Back-end : Spring Boot • Base : MySQL 5+  
-> Tests : Jest, Cypress, JUnit 5 + Mockito, JaCoCo
+Ce module Angular contient l’interface utilisateur de l’application Yoga.
 
 ---
 
-## 🗂️ Structure du projet
+## Prérequis
 
-## 🗂️ Structure du projet
-
-yoga-app/
-├─ back/ # API Spring Boot
-│ ├─ src/
-│ ├─ pom.xml
-│ └─ README-back.md # (spécifique back)
-├─ front/ # SPA Angular
-│ ├─ src/
-│ ├─ cypress/ # tests E2E
-│ └─ package.json
-├─ ressources/
-│ ├─ postman/
-│ │ └─ yoga.postman_collection.json
-│ └─ sql/
-│ └─ script.sql
-├─ .github/workflows/ci.yml # pipeline CI
-└─ README.md # ce fichier<
-
+- Node.js ≥ 16
+- npm (ou yarn)
+- Angular CLI 14
 
 ---
 
-## 🚀 Prérequis
-
-- **Java 11+** & **Maven**
-- **Node 16+**, **npm**
-- **Angular CLI 14** (`npm install -g @angular/cli@14`)
-- **MySQL 5.7+** (port 3306)
-- (Facultatif) IDE : VS Code, IntelliJ…
-
----
-
-## 🛠️ Installation & configuration
-
-1. **Cloner le repo**  
-   ```bash
-   git clone https://github.com/OpenClassrooms-Student-Center/P5-Full-Stack-testing.git yoga-app
-   cd yoga-app
-
-2. **Base de données MySQL**
-
-    Importer /ressources/sql/script.sql ou laisser createDatabaseIfNotExist=true créer la base yoga_db.
-
-    Par défaut, admin :
-
-    login : yoga@studio.com  
-    password : test!1234
-
-    Variables d’environnement Back
-Dans back/src/main/resources/application.properties (ou via env vars) :
-
-    spring.datasource.url=jdbc:mysql://localhost:3306/yoga_db?createDatabaseIfNotExist=true&serverTimezone=UTC
-    spring.datasource.username=VOTRE_DB_USER
-    spring.datasource.password=VOTRE_DB_PASS
-
-    oc.app.jwtSecret=VOTRE_CLE_SECRETE_JWT
-    oc.app.jwtExpirationMs=86400000
-
-▶️ Démarrage
-1. Lancer l’API (Back-end)
-
-cd back
-mvn clean install
-mvn spring-boot:run
-
-L’API REST est disponible sur http://localhost:8080/api
-2. Lancer le Front-end
+## Installation
 
 cd front
 npm install
-ng serve
 
-Le client web tourne sur http://localhost:4200
-🧪 Tests & couverture
-A. Tests unitaires & d’intégration Front (Jest)
+## Lancement en mode développement
 
 cd front
-npm test
-# ↪ lance les tests unitaires (*.spec.ts) + d’intégration (*.integration.spec.ts)
-npm run test:coverage
-# ↪ génère rapport dans coverage/front/index.html
+npm run start
 
-    Objectif : ≥ 80 % de couverture, ≥ 30 % en intégration
+- L’application sera disponible sur http://localhost:4200.
 
-    Mock des services avec HttpClientTestingModule ou HttpClientInMemoryWebApiModule
+- Par défaut, elle interroge l’API à http://localhost:8080/api
 
-B. Tests End-to-End (Cypress)
+## Tests unitaires & d’intégration
+
+    Unitaires (Jest) et intégration :
 
 cd front
-npx cypress open      # interface interactive
-npx cypress run       # exécution headless
-npm run e2e           # alias pour npx cypress run
-npm run e2e:coverage  # génère rapport avec @cypress/code-coverage
+npm run test
 
-    Mock API via cy.intercept()
+Watch mode :
 
-    Objectif : ≥ 80 % de couverture E2E
+cd front
+npm run test:watch
 
-C. Tests Back (JUnit 5 + Mockito + SpringBootTest)
+Rapport de couverture (Jest) :
+Après npm run test, ouvrez front/coverage/jest/lcov-report/index.html
 
-cd back
-mvn test
-mvn jacoco:report
+Tests end-to-end (E2E)
 
-    Unitaires : services & contrôleurs (MockMvc + Mockito)
+Nous utilisons Cypress pour les tests e2e.
 
-    Intégration : @SpringBootTest + H2 + TestRestTemplate
+    Ouvrir Cypress pour les tests :
 
-    Objectif : ≥ 80 % de couverture, ≥ 30 % en intégration
+cd front
+npm run e2e
 
-    Ne pas tester les DTO
+Générer le rapport de couverture E2E :
 
-📊 Rapports de couverture
+cd front
+npm run e2e:coverage
 
-    Front : front/coverage/jest/index.html
+Exécuter tous les tests afin d'englober tout le couverage :
 
-    E2E : front/coverage/e2e/index.html
+cd front
+npx cypress run
 
-    Back : back/target/site/jacoco/index.html
+Le rapport de couverture E2E est généré dans front/coverage-e2e/index.html
+
+Ne pas oublier de faire npx cypress run avant de consulter la page de coverage
+
+Variables d’environnement
+
+Les URLs d’API et autres paramètres sont définis dans src/environments/*.ts
 
