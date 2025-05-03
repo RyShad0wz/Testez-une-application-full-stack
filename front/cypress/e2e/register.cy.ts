@@ -1,5 +1,3 @@
-// cypress/e2e/register.cy.ts
-
 describe('Register spec', () => {
   const validFirstName  = '5';        // passes Validators.min(3) numerically
   const validLastName   = '5';

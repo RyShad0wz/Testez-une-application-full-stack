@@ -1,4 +1,3 @@
-// cypress/e2e/login.cy.ts
 describe('Login spec', () => {
   beforeEach(() => {
     cy.visit('/login');

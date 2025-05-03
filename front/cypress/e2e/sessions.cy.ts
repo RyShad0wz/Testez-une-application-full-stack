@@ -1,5 +1,3 @@
-// cypress/e2e/sessions.cy.ts
-
 describe('Sessions flow', () => {
   const nonAdmin = {
     token: 'fake-jwt',

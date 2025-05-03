@@ -1,5 +1,3 @@
-// cypress/e2e/me.cy.ts
-
 describe('Me spec', () => {
   const userId     = 42
   const loginUrl   = '**/api/auth/login'
