@@ -135,7 +135,7 @@
 								</rule>
 							</rules>
 							<excludes>
-								<exclude>**/dto/*</exclude> <!-- Exclure les DTOs -->
+								<exclude>**/dto/*</exclude>
 							</excludes>
 						</configuration>
 					</execution>
